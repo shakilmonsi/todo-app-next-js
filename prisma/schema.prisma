@@ -14,8 +14,8 @@ datasource db {
 }
 
 model Todo {
-  id          String   @id @default(uuid()) @map("_id")
+  id          String    @id @map("_id") @db.ObjectId // ✅ এই লাইনটি পরিবর্তন করা হয়েছে
   title       String?
-  isCompleted Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  isCompleted Boolean   @default(false)
+  createdAt   DateTime  @default(now())
 }
