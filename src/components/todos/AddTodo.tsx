@@ -1,19 +1,23 @@
-import * as actions from "@/actions";
-import Button from "../button/Button";
-import Form from "../form/Form";
-import Input from "../input/Input";
+"use server";
 
-const AddTodo = () => {
-  return (
-    <div>
-      <Form action={actions.createTodo}>
-        <div className="flex gap-4 items-center">
-          <Input name="input" type="text" placeholder="Add Todo Here..." />
-          <Button type="submit" text="Add" bgColor="bg-blue-600" />
-        </div>
-      </Form>
-    </div>
-  );
-};
+import { prisma } from "@/utils/prisma";
+import { revalidatePath } from "next/cache";
 
-export default AddTodo;
+export async function addTodo(formData: FormData) {
+  try {
+    const title = formData.get("title") as string;
+
+    if (!title || title.trim() === "") return;
+
+    await prisma.todo.create({
+      data: {
+        title,
+      },
+    });
+
+    revalidatePath("/");
+  } catch (error) {
+    console.error("❌ Error in addTodo:", error);
+    throw new Error("Something went wrong on the server.");
+  }
+}
